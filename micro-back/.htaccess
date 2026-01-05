@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. Si la URL pide algo de "/rest", ¡Déjalo pasar a la carpeta rest!
+    # Ejemplo: tusitio.com/rest/tareas -> entra a la carpeta rest
+    RewriteRule ^rest/ - [L]
+
+    # 2. Si no es API, manda TODO a la carpeta "public" (Frontend)
+    # Ejemplo: tusitio.com/login -> entra a la carpeta public
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

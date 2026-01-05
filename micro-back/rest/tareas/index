@@ -1,0 +1,44 @@
+<?php
+// 1. CARGA EL CEREBRO (Bootstrap)
+// Esto nos trae la variable $app ya configurada con DB y todo.
+/** @var \Slim\Slim $app */
+$app = require_once __DIR__ . '/../../config/bootstrap.php';
+
+// 2. DEFINIR RUTA DE PRUEBA (GET /rest/tareas/)
+$app->get('/', function () use ($app) {
+    try {
+        // Intentamos obtener la conexión del contenedor
+        $db = $app->db; 
+        
+        // Hacemos una consulta real a la base de datos
+        // Consultamos la versión de MySQL para asegurar que hay tráfico de datos
+        $stmt = $db->query("SELECT VERSION() as version_mysql, DATABASE() as base_datos");
+        $resultado = $stmt->fetch();
+
+        // Si llegamos aquí, ¡ÉXITO!
+        echo json_encode([
+            'status' => 'success',
+            'message' => '¡Conexión Backend-DB Exitosa!',
+            'data' => $resultado,
+            'timestamp' => date('Y-m-d H:i:s')
+        ]);
+
+    } catch (PDOException $e) {
+        // Si falla la conexión a la BD
+        $app->halt(500, json_encode([
+            'status' => 'error',
+            'message' => 'Error de Base de Datos',
+            'details' => $e->getMessage()
+        ]));
+    } catch (Exception $e) {
+        // Si falla otra cosa
+        $app->halt(500, json_encode([
+            'status' => 'error',
+            'message' => 'Error del Servidor',
+            'details' => $e->getMessage()
+        ]));
+    }
+});
+
+// 3. EJECUTAR SLIM
+$app->run();
