@@ -37,4 +37,16 @@ $app->container->singleton('db', function () {
 
 // 6. Retornar la instancia de $app
 // Esto es vital: los index.php de /rest harán: $app = require 'bootstrap.php';
+// ... código anterior ...
+
+// 5. Inyección de Dependencias...
+$app->container->singleton('db', function () {
+    return DB::getInstance();
+});
+
+// [NUEVO] 6. Registrar Middleware Globales
+// El CORS debe ir en todas las peticiones
+$app->add(new \Middleware\CorsMiddleware());
+
+// 7. Retornar la instancia de $app
 return $app;
